@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMLEK — Qualification Acheteur</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#080808;--dark:#0D0D0D;--dark2:#111;
+  --gold:#C9A84C;--gold-dim:rgba(201,168,76,0.09);
+  --gold-line:rgba(201,168,76,0.18);
+  --white:#F5F5F5;--gray:#888;
+  --green:#2ECC71;--red:#E74C3C;--orange:#FF8A00;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;min-height:100vh;}
+
+/* ── TOP NAV ── */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:0;border-bottom:1px solid #111;background:var(--dark);}
+.tnlogo{display:flex;align-items:center;gap:12px;padding:16px 24px;border-right:1px solid #111;}
+.tnlogo svg{width:38px;height:38px;}
+.tnname{font-weight:900;font-size:13px;letter-spacing:4px;color:var(--white);}
+.tnsub{font-size:6px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-top:2px;}
+.tntabs{display:flex;flex:1;}
+.tntab{flex:1;padding:18px 16px;text-align:center;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;max-width:200px;}
+.tntab:hover{color:var(--gold);}
+.tntab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.tnlang{display:flex;gap:4px;padding:0 24px;}
+.lbtn{padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid #222;background:transparent;color:var(--gray);cursor:pointer;transition:all 0.2s;}
+.lbtn.on{background:var(--gold-dim);border-color:var(--gold-line);color:var(--gold);}
+
+/* ── VIEWS ── */
+#vForm{display:block;}
+#vDash{display:none;}
+
+/* ── HERO ── */
+.hero{padding:44px 24px 32px;text-align:center;position:relative;overflow:hidden;background:var(--dark);border-bottom:1px solid #111;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.025) 1px,transparent 1px);background-size:60px 60px;}
+.hero-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:400px;height:200px;background:radial-gradient(ellipse,rgba(201,168,76,0.07) 0%,transparent 70%);}
+.hero-eye{font-size:8px;font-weight:700;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;position:relative;display:inline-flex;align-items:center;gap:10px;}
+.hero-eye::before,.hero-eye::after{content:'';width:24px;height:1px;background:var(--gold);opacity:0.4;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,46px);font-weight:300;line-height:1.2;position:relative;margin-bottom:10px;}
+.hero-title strong{font-weight:700;color:var(--gold);font-style:italic;}
+.hero-desc{font-size:11px;color:var(--gray);line-height:1.8;max-width:380px;margin:0 auto;position:relative;}
+
+/* ── PROGRESS ── */
+.prog-wrap{max-width:540px;margin:28px auto 0;padding:0 24px;}
+.prog-dots{display:flex;align-items:center;}
+.pdot{width:26px;height:26px;border-radius:50%;border:1px solid #222;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#444;transition:all 0.3s;flex-shrink:0;z-index:2;}
+.pdot.on{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+.pdot.done{border-color:var(--gold);background:var(--gold);color:#000;}
+.pline{flex:1;height:1px;background:#1e1e1e;position:relative;overflow:hidden;}
+.pfill{position:absolute;top:0;left:0;height:100%;background:var(--gold);width:0%;transition:width 0.4s ease;}
+.plabs{display:flex;margin-top:8px;}
+.plab{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#333;transition:color 0.3s;text-align:center;flex:1;}
+.plab.on{color:var(--gold);}
+
+/* ── FORM BODY ── */
+.form-body{max-width:540px;margin:0 auto;padding:32px 24px 80px;}
+
+/* steps — all hidden by default */
+.qstep{display:none;}
+.qstep.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+.step-head{margin-bottom:24px;}
+.step-num{font-size:8px;font-weight:700;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--white);line-height:1.1;}
+.step-title-ar{font-size:14px;color:var(--gray);margin-top:4px;direction:rtl;font-weight:400;}
+
+/* ── FIELD ── */
+.field{margin-bottom:18px;}
+.fl{display:block;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:4px;}
+.fla{display:block;font-size:9px;color:rgba(201,168,76,0.45);direction:rtl;margin-bottom:6px;font-weight:400;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--dark2);border:1px solid #1e1e1e;
+  color:var(--white);padding:13px 16px;font-family:'Montserrat',sans-serif;
+  font-size:13px;outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;border-radius:0;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field select option{background:#111;}
+.field textarea{height:76px;resize:none;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── CHOICES ── */
+.cc{display:grid;gap:7px;margin-top:6px;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.ch{
+  padding:13px 12px;background:var(--dark2);
+  border:1px solid #1e1e1e;cursor:pointer;
+  transition:all 0.15s;display:flex;flex-direction:column;gap:3px;
+}
+.ch:hover{border-color:var(--gold-line);}
+.ch.sel{border-color:var(--gold);background:var(--gold-dim);}
+.cf{font-size:11px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:0.5px;}
+.car{font-size:10px;color:var(--gray);direction:rtl;}
+
+/* ── BUDGET ── */
+.bbox{padding:20px 24px;background:var(--dark2);border:1px solid var(--gold-line);text-align:center;margin-bottom:14px;}
+.bnum{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--gold);}
+.bunits{display:flex;justify-content:space-between;margin-top:4px;}
+.buf{font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;}
+.bua{font-size:9px;color:rgba(201,168,76,0.4);direction:rtl;}
+input[type=range]{width:100%;height:2px;background:#1e1e1e;outline:none;border:none;-webkit-appearance:none;padding:0;margin-bottom:6px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--black);}
+.rmarks{display:flex;justify-content:space-between;}
+.rm{font-size:8px;color:#333;}
+.fdiv{height:1px;background:linear-gradient(90deg,var(--gold-line),transparent);margin:20px 0;}
+
+/* ── BUTTONS ── */
+.navbtns{display:flex;gap:10px;margin-top:28px;}
+.bnext{flex:1;padding:15px;background:var(--gold);color:#000;border:none;font-family:'Montserrat',sans-serif;font-weight:800;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.bnext:hover{background:#d4ad52;}
+.bback{padding:15px 18px;background:transparent;color:var(--gray);border:1px solid #1e1e1e;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.bback:hover{border-color:var(--gold-line);color:var(--gold);}
+
+/* ── SUCCESS ── */
+.success-screen{display:none;text-align:center;padding:56px 24px;max-width:420px;margin:0 auto;}
+.sicon{margin-bottom:18px;}
+.stit{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--white);margin-bottom:6px;}
+.stit span{color:var(--gold);font-style:italic;}
+.stit-ar{font-size:14px;color:var(--gray);direction:rtl;margin-bottom:18px;}
+.sdesc{font-size:11px;color:var(--gray);line-height:1.8;margin-bottom:6px;}
+.sdesc-ar{font-size:11px;color:rgba(201,168,76,0.4);line-height:1.8;direction:rtl;margin-bottom:24px;}
+.sref{display:inline-block;padding:11px 24px;background:var(--gold-dim);border:1px solid var(--gold-line);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
+.snewbtn{margin-top:20px;padding:12px 24px;background:transparent;border:1px solid #222;color:var(--gray);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;display:inline-block;}
+.snewbtn:hover{border-color:var(--gold-line);color:var(--gold);}
+
+/* ── DASHBOARD ── */
+.dash-header{padding:24px;background:var(--dark);border-bottom:1px solid #111;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.dash-title{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}
+.dash-title span{color:var(--gold);}
+.dash-count{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);border:1px solid var(--gold-line);padding:7px 14px;}
+
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#111;margin:1px;}
+.dstat{background:var(--dark);padding:18px 20px;text-align:center;}
+.dstat-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--gold);}
+.dstat-label{font-size:7px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-top:4px;}
+
+.dash-actions{display:flex;gap:8px;padding:16px 24px;}
+.dbtn{padding:10px 20px;background:transparent;border:1px solid var(--gold-line);color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.dbtn:hover{background:var(--gold-dim);}
+.dbtn-red{border-color:rgba(231,76,60,0.2);color:#E74C3C;}
+.dbtn-red:hover{background:rgba(231,76,60,0.08);}
+
+.table-wrap{margin:0 1px 24px;overflow-x:auto;border:1px solid #111;}
+.dtable{width:100%;border-collapse:collapse;font-size:11px;min-width:800px;}
+.dtable th{padding:11px 14px;text-align:left;font-size:7px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;background:rgba(201,168,76,0.04);border-bottom:1px solid #111;white-space:nowrap;}
+.dtable td{padding:13px 14px;border-bottom:1px solid #0f0f0f;color:rgba(245,245,245,0.75);font-family:'Inter',sans-serif;white-space:nowrap;}
+.dtable tr:hover td{background:rgba(201,168,76,0.025);}
+.dtable tr:last-child td{border-bottom:none;}
+
+.badge{display:inline-block;padding:3px 8px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:1px;}
+.b-hot{background:rgba(231,76,60,0.12);color:#E74C3C;border:1px solid rgba(231,76,60,0.25);}
+.b-warm{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid var(--gold-line);}
+.b-cold{background:rgba(166,166,166,0.08);color:var(--gray);border:1px solid #2a2a2a;}
+
+.nodata{text-align:center;padding:60px 24px;color:var(--gray);font-size:12px;}
+.nodata-icon{font-size:36px;margin-bottom:12px;}
+
+/* footer */
+.ft{padding:16px 24px;border-top:1px solid #111;display:flex;align-items:center;justify-content:space-between;}
+.ftc{font-size:8px;letter-spacing:2px;color:#222;text-transform:uppercase;}
+.ftt{font-size:8px;letter-spacing:2px;color:var(--gold);opacity:0.4;}
+
+@media(max-width:520px){
+  .frow{grid-template-columns:1fr;}
+  .c3{grid-template-columns:1fr 1fr;}
+  .dash-stats{grid-template-columns:1fr 1fr;}
+  .tntab{font-size:8px;padding:14px 10px;}
+  .tnlang{padding:0 12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="tnlogo">
+    <svg viewBox="0 0 100 100" fill="none">
+      <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+      <polygon points="50,16 80,33 80,67 50,84 20,67 20,33" fill="none" stroke="#C9A84C" stroke-width="1" opacity="0.2"/>
+      <path d="M30,65 L30,40 L42,55 L50,43 L58,55 L70,40 L70,65" fill="none" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="square" stroke-linejoin="miter"/>
+      <circle cx="50" cy="43" r="3.5" fill="#C9A84C"/>
+      <path d="M30,65 Q50,76 70,65" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="tnname">MAMLEK</div>
+      <div class="tnsub">Real Estate Intelligence</div>
+    </div>
+  </div>
+  <div class="tntabs">
+    <div class="tntab on" onclick="showView('form')">📋 Formulaire</div>
+    <div class="tntab" onclick="showView('dash')">📊 Portefeuille</div>
+  </div>
+  <div class="tnlang">
+    <button class="lbtn on" onclick="setL('fr')">FR</button>
+    <button class="lbtn" onclick="setL('ar')">عر</button>
+  </div>
+</div>
+
+<!-- ═══ FORM VIEW ═══ -->
+<div id="vForm">
+
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-eye" id="hey">MAMLEK · Algérie 🇩🇿</div>
+    <h1 class="hero-title" id="htitle">Trouvons le bien<br><strong>fait pour toi</strong></h1>
+    <p class="hero-desc" id="hdesc">2 minutes. Des questions précises. Une sélection personnalisée.</p>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-dots">
+      <div class="pdot on" id="pd1">1</div>
+      <div class="pline"><div class="pfill" id="pl1"></div></div>
+      <div class="pdot" id="pd2">2</div>
+      <div class="pline"><div class="pfill" id="pl2"></div></div>
+      <div class="pdot" id="pd3">3</div>
+      <div class="pline"><div class="pfill" id="pl3"></div></div>
+      <div class="pdot" id="pd4">4</div>
+    </div>
+    <div class="plabs">
+      <span class="plab on" id="plb1">Identité</span>
+      <span class="plab" id="plb2">Budget</span>
+      <span class="plab" id="plb3">Projet</span>
+      <span class="plab" id="plb4">Timing</span>
+    </div>
+  </div>
+
+  <div class="form-body">
+
+    <!-- STEP 1 -->
+    <div class="qstep active" id="q1">
+      <div class="step-head">
+        <div class="step-num">01 / 04</div>
+        <div class="step-title">Qui êtes-vous ?</div>
+        <div class="step-title-ar">من أنت؟</div>
+      </div>
+
+      <div class="frow">
+        <div class="field">
+          <span class="fl">Prénom *</span>
+          <span class="fla">الاسم الأول</span>
+          <input type="text" id="f_prenom" placeholder="Votre prénom">
+        </div>
+        <div class="field">
+          <span class="fl">Nom</span>
+          <span class="fla">اللقب</span>
+          <input type="text" id="f_nom" placeholder="Votre nom">
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Téléphone WhatsApp *</span>
+        <span class="fla">رقم الهاتف واتساب</span>
+        <input type="tel" id="f_tel" placeholder="+213 6XX XXX XXX">
+      </div>
+
+      <div class="field">
+        <span class="fl">Vous êtes / أنت *</span>
+        <div class="cc c3" id="grp_profil">
+          <div class="ch" onclick="pick('grp_profil','profil','Acheteur',this)">
+            <span class="cf">🏠 Acheteur</span>
+            <span class="car">مشتري</span>
+          </div>
+          <div class="ch" onclick="pick('grp_profil','profil','Investisseur',this)">
+            <span class="cf">💼 Investisseur</span>
+            <span class="car">مستثمر</span>
+          </div>
+          <div class="ch" onclick="pick('grp_profil','profil','Diaspora',this)">
+            <span class="cf">🌍 Diaspora</span>
+            <span class="car">مغترب</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbtns">
+        <button class="bnext" onclick="next(1)">Continuer · متابعة →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="qstep" id="q2">
+      <div class="step-head">
+        <div class="step-num">02 / 04</div>
+        <div class="step-title">Votre Budget</div>
+        <div class="step-title-ar">ميزانيتك</div>
+      </div>
+
+      <div class="bbox">
+        <div class="bnum" id="bnum">15 000 000</div>
+        <div class="bunits">
+          <span class="buf">Dinars Algériens</span>
+          <span class="bua">دينار جزائري</span>
+        </div>
+      </div>
+
+      <input type="range" id="bslider" min="3" max="100" value="15" oninput="updBudget(this.value)">
+      <div class="rmarks">
+        <span class="rm">3M</span><span class="rm">25M</span>
+        <span class="rm">50M</span><span class="rm">100M</span>
+      </div>
+
+      <div class="fdiv"></div>
+
+      <div class="field">
+        <span class="fl">Financement / التمويل *</span>
+        <div class="cc c2" id="grp_fin">
+          <div class="ch" onclick="pick('grp_fin','fin','Cash',this)">
+            <span class="cf">💵 Cash</span><span class="car">نقداً</span>
+          </div>
+          <div class="ch" onclick="pick('grp_fin','fin','Crédit bancaire',this)">
+            <span class="cf">🏦 Crédit</span><span class="car">قرض بنكي</span>
+          </div>
+          <div class="ch" onclick="pick('grp_fin','fin','Mixte',this)">
+            <span class="cf">⚖️ Mixte</span><span class="car">مختلط</span>
+          </div>
+          <div class="ch" onclick="pick('grp_fin','fin','Non défini',this)">
+            <span class="cf">❓ Non défini</span><span class="car">غير محدد</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbtns">
+        <button class="bback" onclick="prev(2)">← Retour</button>
+        <button class="bnext" onclick="next(2)">Continuer · متابعة →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="qstep" id="q3">
+      <div class="step-head">
+        <div class="step-num">03 / 04</div>
+        <div class="step-title">Votre Projet</div>
+        <div class="step-title-ar">مشروعك العقاري</div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Type de bien / نوع العقار *</span>
+        <div class="cc c3" id="grp_type">
+          <div class="ch" onclick="pick('grp_type','type','Appartement',this)">
+            <span class="cf">🏢 Appart</span><span class="car">شقة</span>
+          </div>
+          <div class="ch" onclick="pick('grp_type','type','Villa',this)">
+            <span class="cf">🏡 Villa</span><span class="car">فيلا</span>
+          </div>
+          <div class="ch" onclick="pick('grp_type','type','Commercial',this)">
+            <span class="cf">🏪 Local</span><span class="car">محل تجاري</span>
+          </div>
+          <div class="ch" onclick="pick('grp_type','type','Terrain',this)">
+            <span class="cf">📐 Terrain</span><span class="car">أرض</span>
+          </div>
+          <div class="ch" onclick="pick('grp_type','type','Bureau',this)">
+            <span class="cf">💼 Bureau</span><span class="car">مكتب</span>
+          </div>
+          <div class="ch" onclick="pick('grp_type','type','Indifférent',this)">
+            <span class="cf">🔄 Autre</span><span class="car">أخرى</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Wilaya * / الولاية</span>
+        <select id="f_wilaya">
+          <option value="">Sélectionner / اختر الولاية</option>
+          <option>Alger — الجزائر</option>
+          <option>Oran — وهران</option>
+          <option>Constantine — قسنطينة</option>
+          <option>Annaba — عنابة</option>
+          <option>Blida — البليدة</option>
+          <option>Tizi Ouzou — تيزي وزو</option>
+          <option>Béjaïa — بجاية</option>
+          <option>Sétif — سطيف</option>
+          <option>Batna — باتنة</option>
+          <option>Tlemcen — تلمسان</option>
+          <option>Tipaza — تيبازة</option>
+          <option>Boumerdès — بومرداس</option>
+          <option>Autre — أخرى</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="fl">Quartier / الحي</span>
+        <input type="text" id="f_quartier" placeholder="Hydra, Dely Brahim, Bab Ezzouar...">
+      </div>
+
+      <div class="field">
+        <span class="fl">Surface / المساحة</span>
+        <div class="cc c3" id="grp_surf">
+          <div class="ch" onclick="pick('grp_surf','surf','<80m²',this)">
+            <span class="cf">< 80 m²</span><span class="car">أقل من 80م²</span>
+          </div>
+          <div class="ch" onclick="pick('grp_surf','surf','80–130m²',this)">
+            <span class="cf">80–130 m²</span><span class="car">80 إلى 130م²</span>
+          </div>
+          <div class="ch" onclick="pick('grp_surf','surf','>130m²',this)">
+            <span class="cf">> 130 m²</span><span class="car">أكثر من 130م²</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbtns">
+        <button class="bback" onclick="prev(3)">← Retour</button>
+        <button class="bnext" onclick="next(3)">Continuer · متابعة →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="qstep" id="q4">
+      <div class="step-head">
+        <div class="step-num">04 / 04</div>
+        <div class="step-title">Timing & Contexte</div>
+        <div class="step-title-ar">التوقيت والسياق</div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Délai d'achat * / متى تريد الشراء</span>
+        <div class="cc c2" id="grp_timing">
+          <div class="ch" onclick="pick('grp_timing','timing','Immédiat',this)">
+            <span class="cf">⚡ Immédiat</span><span class="car">فوري — أقل من شهر</span>
+          </div>
+          <div class="ch" onclick="pick('grp_timing','timing','1–3 mois',this)">
+            <span class="cf">📅 1–3 mois</span><span class="car">1 إلى 3 أشهر</span>
+          </div>
+          <div class="ch" onclick="pick('grp_timing','timing','3–6 mois',this)">
+            <span class="cf">🗓 3–6 mois</span><span class="car">3 إلى 6 أشهر</span>
+          </div>
+          <div class="ch" onclick="pick('grp_timing','timing','+6 mois',this)">
+            <span class="cf">🔭 +6 mois</span><span class="car">أكثر من 6 أشهر</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Déjà visité des biens ? / هل زرت عقارات؟</span>
+        <div class="cc c2" id="grp_vis">
+          <div class="ch" onclick="pick('grp_vis','vis','Oui sans succès',this)">
+            <span class="cf">😔 Oui, sans succès</span><span class="car">نعم، دون نتيجة</span>
+          </div>
+          <div class="ch" onclick="pick('grp_vis','vis','Non je commence',this)">
+            <span class="cf">🚀 Non, je commence</span><span class="car">لا، أبدأ الآن</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="fl">Message / رسالة (optionnel)</span>
+        <textarea id="f_msg" placeholder="Vos critères ou situation / معاييرك أو وضعك..."></textarea>
+      </div>
+
+      <div class="navbtns">
+        <button class="bback" onclick="prev(4)">← Retour</button>
+        <button class="bnext" onclick="submit()">✓ Envoyer · إرسال</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="succScreen">
+      <div class="sicon">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+          <path d="M30,65 L30,40 L42,55 L50,43 L58,55 L70,40 L70,65" fill="none" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="square"/>
+          <circle cx="50" cy="43" r="3.5" fill="#C9A84C"/>
+          <path d="M30,65 Q50,76 70,65" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stit">Profil <span>reçu ✓</span></div>
+      <div class="stit-ar">تم استلام ملفك بنجاح ✓</div>
+      <p class="sdesc">MAMLEK analyse votre profil et revient vers vous sous 24h via WhatsApp avec une sélection personnalisée.</p>
+      <p class="sdesc-ar">سيتواصل معك فريق مملك خلال 24 ساعة عبر واتساب بقائمة مختارة.</p>
+      <div class="sref" id="refnum">MAMLEK · REF #0001</div>
+      <br>
+      <button class="snewbtn" onclick="resetForm()">+ Nouveau profil · ملف جديد</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD VIEW ═══ -->
+<div id="vDash">
+  <div class="dash-header">
+    <div class="dash-title">Portefeuille <span>Acheteurs</span></div>
+    <div class="dash-count" id="dcount">0 profil(s)</div>
+  </div>
+
+  <div class="dash-stats">
+    <div class="dstat">
+      <div class="dstat-val" id="ds_total">0</div>
+      <div class="dstat-label">Total profils</div>
+    </div>
+    <div class="dstat">
+      <div class="dstat-val" id="ds_hot">0</div>
+      <div class="dstat-label">🔥 HOT leads</div>
+    </div>
+    <div class="dstat">
+      <div class="dstat-val" id="ds_avg">—</div>
+      <div class="dstat-label">Budget moyen</div>
+    </div>
+    <div class="dstat">
+      <div class="dstat-val" id="ds_alger">0</div>
+      <div class="dstat-label">Alger</div>
+    </div>
+  </div>
+
+  <div class="dash-actions">
+    <button class="dbtn" onclick="exportCSV()">↓ Exporter CSV</button>
+    <button class="dbtn dbtn-red" onclick="clearAll()">🗑 Effacer tout</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nom</th>
+          <th>Téléphone</th>
+          <th>Profil</th>
+          <th>Budget</th>
+          <th>Financement</th>
+          <th>Wilaya</th>
+          <th>Type</th>
+          <th>Surface</th>
+          <th>Timing</th>
+          <th>Temp.</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="dtbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="ft">
+  <span class="ftc">© 2025 MAMLEK · Algeria</span>
+  <span class="ftt">Real Estate Intelligence</span>
+</div>
+
+<script>
+// ── STORAGE ──
+const SK = 'mamlek_v3';
+function getLeads(){ try{ return JSON.parse(localStorage.getItem(SK))||[]; }catch{ return []; } }
+function saveLeads(arr){ localStorage.setItem(SK, JSON.stringify(arr)); }
+
+// ── STATE ──
+let cur = 1;
+let D = { prenom:'',nom:'',tel:'',profil:'',budget:15,fin:'',type:'',surf:'',wilaya:'',quartier:'',timing:'',vis:'',msg:'' };
+
+// ── VIEWS ──
+function showView(v){
+  document.getElementById('vForm').style.display = v==='form'?'block':'none';
+  document.getElementById('vDash').style.display = v==='dash'?'block':'none';
+  document.querySelectorAll('.tntab').forEach((t,i)=>t.classList.toggle('on', i===(v==='form'?0:1)));
+  if(v==='dash') renderDash();
+}
+
+// ── LANG ──
+function setL(l){
+  document.querySelectorAll('.lbtn').forEach((b,i)=>b.classList.toggle('on',i===(l==='fr'?0:1)));
+  const isAr = l==='ar';
+  document.getElementById('hey').textContent = isAr ? 'مملك · الجزائر 🇩🇿' : 'MAMLEK · Algérie 🇩🇿';
+  document.getElementById('htitle').innerHTML = isAr ? 'نجد العقار<br><strong>المناسب لك</strong>' : 'Trouvons le bien<br><strong>fait pour toi</strong>';
+  document.getElementById('hdesc').textContent = isAr ? 'دقيقتان. أسئلة دقيقة. اختيار شخصي يناسب ملفك.' : '2 minutes. Des questions précises. Une sélection personnalisée.';
+  const lbls = isAr ? ['الهوية','الميزانية','المشروع','التوقيت'] : ['Identité','Budget','Projet','Timing'];
+  lbls.forEach((t,i)=>document.getElementById('plb'+(i+1)).textContent=t);
+  document.body.style.direction = isAr?'rtl':'ltr';
+}
+
+// ── CHOICES ──
+function pick(grpId, field, val, el){
+  document.getElementById(grpId).querySelectorAll('.ch').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  D[field] = val;
+}
+
+// ── BUDGET ──
+function updBudget(v){
+  D.budget = parseInt(v);
+  document.getElementById('bnum').textContent = (parseInt(v)*1000000).toLocaleString('fr-FR');
+}
+
+// ── PROGRESS ──
+function updProg(s){
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('pd'+i), lb=document.getElementById('plb'+i);
+    d.classList.remove('on','done'); lb.classList.remove('on');
+    if(i<s){ d.classList.add('done'); d.textContent='✓'; }
+    else if(i===s){ d.classList.add('on'); d.textContent=i; lb.classList.add('on'); }
+    else d.textContent=i;
+    if(i<=3) document.getElementById('pl'+i).style.width = i<s?'100%':'0%';
+  }
+}
+
+// ── NAVIGATION ──
+function next(from){
+  // validate
+  if(from===1){
+    if(!document.getElementById('f_prenom').value.trim()){ alert('Prénom requis · الاسم مطلوب'); return; }
+    if(!document.getElementById('f_tel').value.trim()){ alert('Téléphone requis · الهاتف مطلوب'); return; }
+    if(!D.profil){ alert('Sélectionnez votre profil · اختر ملفك'); return; }
+    D.prenom = document.getElementById('f_prenom').value.trim();
+    D.nom = document.getElementById('f_nom').value.trim();
+    D.tel = document.getElementById('f_tel').value.trim();
+  }
+  if(from===2 && !D.fin){ alert('Sélectionnez le financement · اختر التمويل'); return; }
+  if(from===3){
+    if(!D.type){ alert('Sélectionnez le type de bien · اختر نوع العقار'); return; }
+    if(!document.getElementById('f_wilaya').value){ alert('Sélectionnez la wilaya · اختر الولاية'); return; }
+    D.wilaya = document.getElementById('f_wilaya').value;
+    D.quartier = document.getElementById('f_quartier').value.trim();
+  }
+
+  // hide current, show next
+  document.getElementById('q'+from).classList.remove('active');
+  cur = from + 1;
+  document.getElementById('q'+cur).classList.add('active');
+  updProg(cur);
+  window.scrollTo(0,0);
+}
+
+function prev(from){
+  document.getElementById('q'+from).classList.remove('active');
+  cur = from - 1;
+  document.getElementById('q'+cur).classList.add('active');
+  updProg(cur);
+  window.scrollTo(0,0);
+}
+
+// ── SUBMIT ──
+function submit(){
+  if(!D.timing){ alert('Sélectionnez le timing · اختر التوقيت'); return; }
+  D.msg = document.getElementById('f_msg').value.trim();
+
+  // score HOT/WARM/COLD
+  let s=0;
+  if(D.timing==='Immédiat') s+=3;
+  else if(D.timing==='1–3 mois') s+=2;
+  else if(D.timing==='3–6 mois') s+=1;
+  if(D.fin==='Cash') s+=2;
+  else if(D.fin==='Mixte') s+=1;
+  if(D.budget>=20) s+=1;
+  if(D.vis==='Oui sans succès') s+=1;
+  const temp = s>=5?'HOT':s>=3?'WARM':'COLD';
+
+  const lead = { ...D, temp, date:new Date().toLocaleDateString('fr-DZ') };
+  const leads = getLeads();
+  leads.push(lead);
+  saveLeads(leads);
+
+  // show success
+  document.getElementById('q4').classList.remove('active');
+  document.getElementById('succScreen').style.display='block';
+  document.getElementById('refnum').textContent='MAMLEK · REF #'+String(leads.length).padStart(4,'0');
+  window.scrollTo(0,0);
+}
+
+// ── RESET ──
+function resetForm(){
+  D = { prenom:'',nom:'',tel:'',profil:'',budget:15,fin:'',type:'',surf:'',wilaya:'',quartier:'',timing:'',vis:'',msg:'' };
+  // clear inputs
+  ['f_prenom','f_nom','f_tel','f_quartier','f_msg'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('f_wilaya').value='';
+  document.getElementById('bslider').value=15;
+  document.getElementById('bnum').textContent='15 000 000';
+  // clear choices
+  document.querySelectorAll('.ch').forEach(c=>c.classList.remove('sel'));
+  // show step 1
+  document.getElementById('succScreen').style.display='none';
+  document.getElementById('q1').classList.add('active');
+  cur=1; updProg(1);
+  window.scrollTo(0,0);
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  const leads = getLeads();
+  document.getElementById('dcount').textContent = leads.length + ' profil(s)';
+  document.getElementById('ds_total').textContent = leads.length;
+  document.getElementById('ds_hot').textContent = leads.filter(l=>l.temp==='HOT').length;
+  document.getElementById('ds_alger').textContent = leads.filter(l=>l.wilaya&&l.wilaya.includes('Alger')).length;
+  if(leads.length){
+    const avg = Math.round(leads.reduce((s,l)=>s+(l.budget||0),0)/leads.length);
+    document.getElementById('ds_avg').textContent = avg+'M';
+  } else {
+    document.getElementById('ds_avg').textContent='—';
+  }
+
+  const tbody = document.getElementById('dtbody');
+  if(!leads.length){
+    tbody.innerHTML=`<tr><td colspan="12"><div class="nodata"><div class="nodata-icon">📋</div>Aucun profil pour l'instant.<br>Partagez le formulaire sur Instagram pour commencer.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = leads.map((l,i)=>`
+    <tr>
+      <td style="color:var(--gold);font-weight:700">#${String(i+1).padStart(3,'0')}</td>
+      <td style="font-weight:600;color:var(--white)">${l.prenom} ${l.nom}</td>
+      <td>${l.tel}</td>
+      <td>${l.profil||'—'}</td>
+      <td style="color:var(--gold);font-weight:700">${l.budget}M DA</td>
+      <td>${l.fin||'—'}</td>
+      <td>${l.wilaya||'—'}</td>
+      <td>${l.type||'—'}</td>
+      <td>${l.surf||'—'}</td>
+      <td>${l.timing||'—'}</td>
+      <td><span class="badge b-${(l.temp||'cold').toLowerCase()}">${l.temp||'—'}</span></td>
+      <td style="color:var(--gray)">${l.date||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+// ── EXPORT CSV ──
+function exportCSV(){
+  const leads = getLeads();
+  if(!leads.length){ alert('Aucun profil à exporter.'); return; }
+  const h = ['#','Prénom','Nom','Téléphone','Profil','Budget(M DA)','Financement','Wilaya','Quartier','Type','Surface','Timing','Visites','Message','Température','Date'];
+  const rows = leads.map((l,i)=>[
+    '#'+String(i+1).padStart(3,'0'),
+    l.prenom,l.nom,l.tel,l.profil,l.budget,l.fin,
+    l.wilaya,l.quartier,l.type,l.surf,
+    l.timing,l.vis,l.msg,l.temp,l.date
+  ].map(v=>'"'+(v||'').toString().replace(/"/g,'""')+'"').join(','));
+  const csv = [h.join(','),...rows].join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='MAMLEK_Portefeuille_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── CLEAR ──
+function clearAll(){
+  if(confirm('Effacer tous les profils ? Action irréversible.')){
+    localStorage.removeItem(SK);
+    renderDash();
+  }
+}
+</script>
+</body>
+</html>
